@@ -48,7 +48,7 @@ function AddFilmForm() {
         justifyContent: 'center',
         flexDirection: 'column',
         margin: '0px auto',
-        gap: '1%',
+        gap: '2%',
         boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px',
         padding: '10%',
         borderRadius: '12px',
@@ -67,7 +67,6 @@ function AddFilmForm() {
         error={formik.touched.name && Boolean(formik.errors.name)}
         helperText={formik.touched.name && formik.errors.name}
       />
-      <br />
       <TextField
         id="year"
         name="year"
@@ -79,7 +78,6 @@ function AddFilmForm() {
         error={formik.touched.year && Boolean(formik.errors.year)}
         helperText={formik.touched.year && formik.errors.year}
       />
-      <br />
       <TextField
         id="imdbRating"
         name="imdbRating"
@@ -91,7 +89,6 @@ function AddFilmForm() {
         error={formik.touched.imdbRating && Boolean(formik.errors.imdbRating)}
         helperText={formik.touched.imdbRating && formik.errors.imdbRating}
       />
-      <br />
       <FormControlLabel
         control={
           <Checkbox
@@ -104,7 +101,6 @@ function AddFilmForm() {
         }
         label="Is Series"
       />
-      <br />
       <Button type="submit" variant="contained" color="primary">
         Submit
       </Button>

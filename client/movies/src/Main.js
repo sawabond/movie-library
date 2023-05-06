@@ -3,11 +3,12 @@ import FilmItem from './FilmItem';
 import { Link as RouterLink } from 'react-router-dom';
 import { Button } from '@material-ui/core';
 import axios from 'axios';
-function Main({ setFilm }) {
+function Main() {
   const [searchTerm, setSearchTerm] = useState('');
   const [films, setFilms] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const token = localStorage.getItem('token');
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -21,7 +22,7 @@ function Main({ setFilm }) {
     const fetchFilms = async () => {
       axios
         .get(
-          `http://localhost:5100/films?stwith=${searchTerm}&page=${page}&limit=5`
+          `http://localhost:5100/films?stwith=${searchTerm}&page=${page}&limit=6`
         )
         .then((res) => {
           console.log(res.data);
@@ -57,7 +58,7 @@ function Main({ setFilm }) {
     border: 'none',
     marginBottom: '20px',
     fontSize: '18px',
-    width: '80%',
+    width: '20%',
   };
 
   const buttonStyles = {
@@ -73,24 +74,11 @@ function Main({ setFilm }) {
     marginLeft: '10px',
   };
 
-  const filmListStyles = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    listStyle: 'none',
-    padding: 0,
-  };
-
-  const filmItemStyles = {
-    width: '30%',
-    marginBottom: '20px',
-  };
-
   return (
     <div style={containerStyles}>
       <h1 style={titleStyles}>Film Library</h1>
 
-      <div>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
         <input
           type="text"
           value={searchTerm}
@@ -101,14 +89,39 @@ function Main({ setFilm }) {
       <div
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
+          flexDirection: 'column',
           alignItems: 'center',
         }}
       >
-        <ul style={{ listStyleType: 'none', padding: 0 }}>
+        {token && (
+          <Button
+            component={RouterLink}
+            to="/add"
+            variant="contained"
+            color="primary"
+            style={{ width: '80%' }}
+          >
+            Add Film
+          </Button>
+        )}
+
+        <ul
+          style={{
+            listStyleType: 'none',
+            padding: '0px',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '5%',
+            justifyContent: 'center',
+          }}
+        >
           {films?.map((film) => (
-            <FilmItem key={film.id} film={film} setFilm={setFilm} />
+            <FilmItem
+              key={film.id}
+              film={film}
+              films={films}
+              setFilms={setFilms}
+            />
           ))}
         </ul>
       </div>
@@ -133,16 +146,7 @@ function Main({ setFilm }) {
       <div
         className="create-film"
         style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}
-      >
-        <Button
-          component={RouterLink}
-          to="/add"
-          variant="contained"
-          color="primary"
-        >
-          Add Film
-        </Button>
-      </div>
+      ></div>
     </div>
   );
 }

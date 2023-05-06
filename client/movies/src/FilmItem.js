@@ -1,15 +1,28 @@
 import React, { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Link } from 'react-router-dom';
-function FilmItem(props) {
-  const { film, setFilm } = props;
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+function FilmItem({ film, films, setFilms }) {
   const [isHovered, setIsHovered] = useState(false);
-
-  const handleClick = (e) => {
-    e.preventDefault();
-    setFilm(film);
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+  const handleEditClick = () => {
+    navigate('/update', { state: film });
   };
+  async function deleteCard() {
+    const BASE_URL = 'http://localhost:5100';
+    try {
+      await axios.delete(`${BASE_URL}/films/${film.id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setFilms(films.filter((x) => x.id !== film.id));
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const listItemStyles = {
     display: 'flex',
     flexDirection: 'column',
@@ -23,6 +36,7 @@ function FilmItem(props) {
     marginBottom: '20px',
     position: 'relative', // needed for absolute positioning of action-icons
     cursor: 'pointer', // change cursor on hover
+    flex: '0 0 22.222222%',
   };
 
   const titleStyles = {
@@ -48,6 +62,7 @@ function FilmItem(props) {
     position: 'absolute',
     top: '10px',
     right: '10px',
+    gap: '5%',
   };
 
   return (
@@ -56,19 +71,22 @@ function FilmItem(props) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div style={actionIconsStyles} className="action-icons">
-        <DeleteIcon />
-        <div className="update-button" onClick={handleClick}>
-          <Link to={'/update'}>
+      {token && (
+        <div style={actionIconsStyles} className="action-icons">
+          <button onClick={deleteCard}>
+            <DeleteIcon />
+          </button>
+          <button onClick={handleEditClick}>
             <EditIcon />
-          </Link>
+          </button>
         </div>
-      </div>
+      )}
+
       <h1 style={{ fontSize: '18px', marginBottom: '10px' }}>
         {film.isSeries ? 'Series' : 'Movie'}
       </h1>
       <h2 style={titleStyles}>{film.name}</h2>
-      <p style={ratingStyles}>{film.imdbRating}</p>
+      <p style={ratingStyles}>IMDb: {film.imdbRating}</p>
       <p style={releaseDateStyles}>Release Date: {film.year}</p>
     </li>
   );
