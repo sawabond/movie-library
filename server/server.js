@@ -68,25 +68,6 @@ Film.count().then(async (res) => {
   }
 });
 
-app.put('/my-name', cookieJwtAuth, (req, res) => {
-  User.update(
-    { name: req.body.name },
-    {
-      where: {
-        id: req.user.id,
-      },
-    }
-  ).then(() => {
-    res.send('Your username is updated to ' + req.body.name);
-  });
-});
-
-app.post('/users', (req, res) => {
-  User.create(req.body).then(() => {
-    res.send('User is created');
-  });
-});
-
 app.post('/login', loginRoute);
 
 app.post('/films', cookieJwtAuth, (req, res) => {
@@ -95,16 +76,54 @@ app.post('/films', cookieJwtAuth, (req, res) => {
   });
 });
 
-app.delete('/films', cookieJwtAuth, async (req, res) => {
-  await Film.destroy({
-    where: {
-      name: {
-        [Op.not]: null,
+app.put('/films/:id', cookieJwtAuth, async (req, res) => {
+  const filmId = req.params.id;
+
+  try {
+    let film = await Film.findByPk(filmId);
+
+    if (film === null) {
+      res.status(404);
+      res.send(`Film with id ${filmId} was not found`);
+    }
+
+    await Film.update(req.body, {
+      where: {
+        id: filmId,
       },
-    },
-  }).then(() => {
-    res.send('All films are deleted');
-  });
+    });
+
+    res.send(`Film with id ${filmId} was updated`);
+  } catch (err) {
+    console.warn(err);
+    res.statusCode(400);
+    res.send('Something went wrong');
+  }
+});
+
+app.delete('/films/:id', cookieJwtAuth, async (req, res) => {
+  const filmId = req.params.id;
+
+  try {
+    let film = await Film.findByPk(filmId);
+
+    if (film === null) {
+      res.status(404);
+      res.send(`Film with id ${filmId} was not found`);
+    }
+
+    await Film.destroy({
+      where: {
+        id: filmId,
+      },
+    });
+
+    res.send(`Film with id ${filmId} was deleted`);
+  } catch (err) {
+    console.warn(err);
+    res.statusCode(400);
+    res.send('Something went wrong');
+  }
 });
 
 app.get('/films', async (req, res) => {
