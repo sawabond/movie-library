@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import FilmItem from './FilmItem';
+import { Link as RouterLink } from 'react-router-dom';
+import { Button } from '@material-ui/core';
 import axios from 'axios';
-
-function Main() {
+function Main({ setFilm }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [films, setFilms] = useState([]);
   const [page, setPage] = useState(1);
@@ -88,6 +89,7 @@ function Main() {
   return (
     <div style={containerStyles}>
       <h1 style={titleStyles}>Film Library</h1>
+
       <div>
         <input
           type="text"
@@ -106,7 +108,7 @@ function Main() {
       >
         <ul style={{ listStyleType: 'none', padding: 0 }}>
           {films?.map((film) => (
-            <FilmItem key={film.id} film={film} />
+            <FilmItem key={film.id} film={film} setFilm={setFilm} />
           ))}
         </ul>
       </div>
@@ -127,6 +129,19 @@ function Main() {
             Next
           </button>
         )}
+      </div>
+      <div
+        className="create-film"
+        style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}
+      >
+        <Button
+          component={RouterLink}
+          to="/add"
+          variant="contained"
+          color="primary"
+        >
+          Add Film
+        </Button>
       </div>
     </div>
   );
