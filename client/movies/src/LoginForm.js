@@ -80,7 +80,7 @@ function LoginForm() {
         type="submit"
         disabled={formik.isSubmitting || !formik.isValid}
       >
-        Submit
+        Sign In
       </Button>
     </form>
   );
