@@ -1,8 +1,15 @@
-import React from 'react';
-
+import React, { useState } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { Link } from 'react-router-dom';
 function FilmItem(props) {
-  const { film } = props;
+  const { film, setFilm } = props;
+  const [isHovered, setIsHovered] = useState(false);
 
+  const handleClick = (e) => {
+    e.preventDefault();
+    setFilm(film);
+  };
   const listItemStyles = {
     display: 'flex',
     flexDirection: 'column',
@@ -14,6 +21,8 @@ function FilmItem(props) {
     boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
     transition: '0.3s',
     marginBottom: '20px',
+    position: 'relative', // needed for absolute positioning of action-icons
+    cursor: 'pointer', // change cursor on hover
   };
 
   const titleStyles = {
@@ -34,8 +43,27 @@ function FilmItem(props) {
     marginBottom: '10px',
   };
 
+  const actionIconsStyles = {
+    display: isHovered ? 'flex' : 'none',
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+  };
+
   return (
-    <li style={listItemStyles}>
+    <li
+      style={listItemStyles}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div style={actionIconsStyles} className="action-icons">
+        <DeleteIcon />
+        <div className="update-button" onClick={handleClick}>
+          <Link to={'/update'}>
+            <EditIcon />
+          </Link>
+        </div>
+      </div>
       <h1 style={{ fontSize: '18px', marginBottom: '10px' }}>
         {film.isSeries ? 'Series' : 'Movie'}
       </h1>
